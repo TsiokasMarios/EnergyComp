@@ -1,0 +1,12 @@
+node_modules
+dist
+.git
+.vscode
+.tanstack
+.nitro
+.output
+*.local
+.env
+scripts/snapshots/*.html
+scripts/probe_source.py
+probe-out

@@ -1,0 +1,84 @@
+@import '@fontsource-variable/commissioner/index.css';
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* Register colour codes: blue = fixed, green = special, yellow = variable */
+  --tariff-blue: #1d5fd1;
+  --tariff-green: #1f9d61;
+  --tariff-yellow: #e0a400;
+
+  --background: #f3f5f7;
+  --foreground: #17212b;
+  --card: #ffffff;
+  --card-foreground: #17212b;
+  --popover: #ffffff;
+  --popover-foreground: #17212b;
+  --primary: #17212b;
+  --primary-foreground: #ffffff;
+  --secondary: #eef3f8;
+  --secondary-foreground: #17212b;
+  --muted: #e6ebf0;
+  --muted-foreground: #5b6875;
+  --accent: #eef3f8;
+  --accent-foreground: #17212b;
+  --destructive: #c0362c;
+  --border: #d5dce3;
+  --input: #d5dce3;
+  --ring: #1d5fd1;
+  --link: #1d5fd1;
+  --header-muted: #c6d0da;
+  --radius: 0.375rem;
+}
+
+@theme inline {
+  --font-sans: 'Commissioner Variable', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-link: var(--link);
+  --color-header-muted: var(--header-muted);
+  --color-tariff-blue: var(--tariff-blue);
+  --color-tariff-green: var(--tariff-green);
+  --color-tariff-yellow: var(--tariff-yellow);
+  --radius-sm: calc(var(--radius) - 2px);
+  --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 6px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 15px;
+    line-height: 1.45;
+    font-variant-numeric: tabular-nums;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+  }
+}

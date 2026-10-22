@@ -1,0 +1,19 @@
+:80 {
+	root * /srv
+	encode zstd gzip
+
+	# Content-hashed, safe to cache forever; pages must revalidate to pick up new data
+	@assets path /assets/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+	@pages not path /assets/*
+	header @pages Cache-Control "no-cache"
+
+	try_files {path} {path}/index.html
+	file_server
+
+	# Let the app render its own not-found page
+	handle_errors 404 {
+		rewrite * /index.html
+		file_server
+	}
+}
