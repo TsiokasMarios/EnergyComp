@@ -6,6 +6,7 @@ services:
     init: true
     shm_size: 1gb # Chromium needs more than Docker's 64 MB /dev/shm
     environment:
+      BASE_PATH: /energycomp/ # public path behind the reverse proxy; use / for a (sub)domain of its own
       UPDATE_INTERVAL_DAYS: 7
       RETRY_HOURS: 6
     volumes:
@@ -13,12 +14,12 @@ services:
       - snapshots:/app/scripts/snapshots # last 8 raw captures
       - site:/site
 
-  # Static file server; point your reverse proxy at it
+  # Static file server; the reverse proxy strips BASE_PATH and forwards here
   web:
     image: caddy:2-alpine
     restart: unless-stopped
     ports:
-      - '127.0.0.1:${WEB_PORT:-8080}:80'
+      - '127.0.0.1:${WEB_PORT:-3004}:80'
     volumes:
       - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
       - site:/srv:ro

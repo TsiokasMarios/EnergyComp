@@ -8,6 +8,8 @@ import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 
 const config = defineConfig({
+  // Public path the site is served under, e.g. BASE_PATH=/energycomp/ behind a reverse proxy
+  base: process.env.BASE_PATH || '/',
   fmt: {
     singleQuote: true,
     semi: false,
@@ -21,6 +23,9 @@ const config = defineConfig({
     ignorePatterns: ['src/routeTree.gen.ts', 'src/components/ui/**'],
   },
   resolve: { tsconfigPaths: true },
+  // Prerendering fetches pages from a preview server; "localhost" can resolve to ::1 and
+  // time out while the build is busy, so pin it to IPv4
+  preview: { host: '127.0.0.1' },
   plugins: lazyPlugins(() => [
     devtools(),
     tailwindcss(),

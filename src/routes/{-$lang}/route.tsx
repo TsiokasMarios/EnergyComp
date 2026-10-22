@@ -19,8 +19,8 @@ export const Route = createFileRoute('/{-$lang}')({
         { property: 'og:description', content: t.description },
       ],
       links: [
-        { rel: 'alternate', hrefLang: 'en', href: '/' },
-        { rel: 'alternate', hrefLang: 'el', href: '/el' },
+        { rel: 'alternate', hrefLang: 'en', href: import.meta.env.BASE_URL },
+        { rel: 'alternate', hrefLang: 'el', href: `${import.meta.env.BASE_URL}el` },
         // Start downloading the data while the app boots
         { rel: 'preload', href: tariffsUrl, as: 'fetch', crossOrigin: 'anonymous' },
       ],

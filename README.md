@@ -65,7 +65,25 @@ vp node scripts/extract.ts scripts/snapshots/source-snapshot-2026-09-23.html   #
 
 - **app** builds the site into a shared volume, then fetches the register every `UPDATE_INTERVAL_DAYS` (default 7),
   merges it and rebuilds. A failed fetch leaves the data and site untouched and retries after `RETRY_HOURS` (6).
-- **web** is Caddy serving the build on `127.0.0.1:8080` (set `WEB_PORT` to change); point the reverse proxy at it.
+- **web** is Caddy serving the build on `127.0.0.1:3004` (set `WEB_PORT` to change); point the reverse proxy at it.
+
+The site is built for `BASE_PATH` (`/energycomp/` in `docker-compose.yml`; default `/` for `vp build`). The proxy
+strips that prefix before forwarding, e.g. in nginx's `server { ... }` block:
+
+```nginx
+location = /energycomp {
+    return 301 /energycomp/;
+}
+
+location ^~ /energycomp/ {
+    # Trailing slash strips the prefix: /energycomp/el -> /el
+    proxy_pass http://127.0.0.1:3004/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+}
+```
 
 The merged history lives in the `data` volume, seeded from `src/data` on first start; back it up, since the register
 itself no longer has the dropped tariffs. `docker compose logs -f app` shows each update. To pull the current data
