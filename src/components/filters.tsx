@@ -19,8 +19,8 @@ interface FiltersProps {
   selectMonth: (ym: number | 'all') => void
 }
 
-const fieldLabel = 'text-[13px] font-semibold text-muted-foreground'
-const control = 'h-[42px] bg-card text-[15px] shadow-none'
+const fieldLabel = 'text-[13px] leading-5 font-semibold text-muted-foreground'
+const control = 'h-10 bg-card text-[15px] shadow-none'
 
 export function Filters({ data, filters, search, update, toggleProvider, selectMonth }: FiltersProps) {
   const { t, ymLabel } = useI18n()
@@ -38,14 +38,14 @@ export function Filters({ data, filters, search, update, toggleProvider, selectM
     update({ type: search.type.includes(c) ? search.type.filter((x) => x !== c) : [...search.type, c] })
 
   return (
-    <section className="grid gap-[22px] pt-7" aria-label="Filters">
-      <div className="flex flex-wrap items-end gap-x-7 gap-y-4">
+    <section className="grid gap-6 pt-8" aria-label="Filters">
+      <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
         <div className="grid gap-1.5">
           <Label htmlFor="month" className={fieldLabel}>
             {t.month}
           </Label>
           <Select value={String(filters.ym)} onValueChange={(v) => selectMonth(v === 'all' ? 'all' : Number(v))}>
-            <SelectTrigger id="month" className={`${control} min-w-48 data-[size=default]:h-[42px]`}>
+            <SelectTrigger id="month" className={`${control} min-w-48 data-[size=default]:h-10`}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent position="popper" className="max-h-80">
@@ -68,7 +68,7 @@ export function Filters({ data, filters, search, update, toggleProvider, selectM
             min={0}
             step={10}
             inputMode="numeric"
-            className={`${control} w-[110px]`}
+            className={`${control} w-[120px]`}
             value={kwhText}
             onChange={(e) => {
               setKwhText(e.target.value)
@@ -89,7 +89,7 @@ export function Filters({ data, filters, search, update, toggleProvider, selectM
           {search.prov.length ? (
             <LinkButton onClick={() => update({ prov: [] })}>{t.showAllProviders}</LinkButton>
           ) : (
-            <span className="text-[13px] text-muted-foreground">{t.providersHint}</span>
+            <span className="text-muted-foreground">{t.providersHint}</span>
           )}
         </GroupHead>
         <div className="flex flex-wrap gap-2" role="group" aria-labelledby="prov-label">
@@ -140,9 +140,9 @@ function CheckField({
   children: React.ReactNode
 }) {
   return (
-    <div className="flex min-h-[42px] items-center gap-2">
+    <div className="flex min-h-10 items-center gap-2.5">
       <Checkbox id={id} checked={checked} onCheckedChange={(v) => onChange(v === true)} className="size-[18px]" />
-      <Label htmlFor={id} className="cursor-pointer text-[15px] font-normal">
+      <Label htmlFor={id} className="cursor-pointer text-[15px] leading-5 font-normal">
         {children}
       </Label>
     </div>

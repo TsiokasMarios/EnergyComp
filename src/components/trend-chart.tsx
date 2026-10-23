@@ -118,7 +118,7 @@ export function TrendChart({ trend, metric, kwh, selected, onSelectMonth, descri
             trend.panels.map((pa, k) => (
               <div key={pa.p ?? 'all'} className="relative min-w-0 rounded-md border bg-card">
                 {pa.p && (
-                  <h3 className="mx-3.5 mt-2.5 flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 text-[15px] font-[650]">
+                  <h3 className="mx-3.5 mt-3 flex flex-wrap items-baseline gap-x-2.5 gap-y-0.5 text-[15px] font-semibold">
                     {shortProvider(pa.p)}
                     {trend.multi && (
                       <span className="text-xs font-normal text-muted-foreground">
@@ -266,7 +266,7 @@ function PanelPlot({
           )}
           <line x1={x(e.i) + 7} y1={e.py} x2={lx - 5} y2={e.ly} stroke={AXIS} />
           <text x={lx} y={e.ly + 4}>
-            <tspan className="fill-foreground text-[13px] font-[650]">{metricValue(e.v, metric)}</tspan>{' '}
+            <tspan className="fill-foreground text-[13px] font-semibold">{metricValue(e.v, metric)}</tspan>{' '}
             {t.typeShort[e.c]}
           </text>
         </g>
@@ -348,7 +348,7 @@ function Tip({
                   {r ? `${pa.p ? '' : `${shortProvider(r.t.p)}, `}${r.t.n}` : t.noTariffThisMonth}
                 </span>
               </span>
-              <b className={cn('font-semibold', isWin && 'text-[15px] font-[750]')}>
+              <b className={cn('font-semibold', isWin && 'text-[15px] font-bold')}>
                 {r ? metricValue(r.v, metric) : '—'}
               </b>
             </li>
@@ -369,7 +369,7 @@ function Tip({
 export function CheapestPill() {
   const { t } = useI18n()
   return (
-    <em className="ml-1.5 inline-block rounded-full bg-primary px-[7px] py-px align-[1px] text-[11px] font-[650] text-primary-foreground not-italic">
+    <em className="ml-1.5 inline-block rounded-full border border-current px-1.5 align-[1px] text-[11px] leading-4 font-semibold text-foreground not-italic">
       {t.cheapest}
     </em>
   )

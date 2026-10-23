@@ -1,3 +1,4 @@
+import { ArrowDown, ArrowUp, ChevronDown } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -8,7 +9,7 @@ import type { I18n } from '@/i18n'
 import type { ExplorerSearch, SortKey } from '@/lib/data'
 import { TYPE_COLOR, estimate, headline, isNum, isWhole, priceOf, shortProvider, tiersOf, ymOf } from '@/lib/tariffs'
 import type { Amount, Fuel, Tariff } from '@/lib/types'
-import { cn } from '@/lib/utils'
+import { cn, sectionTitle } from '@/lib/utils'
 
 const PAGE = 300
 
@@ -104,26 +105,26 @@ export function Results({
     <>
       <div
         ref={ref}
-        className="mt-[30px] flex scroll-mt-4 flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b-2 border-foreground pb-3"
+        className="mt-14 flex scroll-mt-4 flex-wrap items-end justify-between gap-x-6 gap-y-4 border-b-2 border-foreground pb-4"
       >
-        <p className="text-lg font-semibold" aria-live="polite">
-          {t.count(int(rows.length), rows.length, providerCount)}
-          <small className="block text-[13px] font-normal text-muted-foreground">
+        <div aria-live="polite">
+          <h2 className={sectionTitle}>{t.count(int(rows.length), rows.length, providerCount)}</h2>
+          <p className="mt-1.5 max-w-[75ch] text-[13px] text-muted-foreground">
             {allMonths ? t.allMonthsSince(firstMonthLabel) : monthLabel}
             {cheapest &&
               !allMonths &&
               `. ${t.lowest(shortProvider(cheapest.t.p), cheapest.t.n, eur(cheapest.est), kwh)}`}
-          </small>
-        </p>
-        <div className="grid gap-1.5">
-          <Label htmlFor="q" className="text-[13px] font-semibold text-muted-foreground">
+          </p>
+        </div>
+        <div className="grid w-[min(320px,100%)] gap-1.5">
+          <Label htmlFor="q" className="text-[13px] leading-5 font-semibold text-muted-foreground">
             {t.search}
           </Label>
           <Input
             id="q"
             type="search"
             placeholder={t.fuels[fuel].searchPlaceholder}
-            className="h-[42px] w-[min(320px,100%)] bg-card text-[15px] shadow-none"
+            className="h-10 bg-card text-[15px] shadow-none"
             value={qText}
             onChange={(e) => {
               setQText(e.target.value)
@@ -142,12 +143,12 @@ export function Results({
         </div>
       ) : (
         <table className="mb-4 w-full border-collapse">
-          <thead className="max-md:hidden">
-            <tr className="[&>th]:sticky [&>th]:top-0 [&>th]:z-[1] [&>th]:border-b [&>th]:bg-background [&>th]:px-3 [&>th]:py-2.5 [&>th]:text-left [&>th]:text-[13px] [&>th]:font-semibold [&>th]:whitespace-nowrap [&>th]:text-muted-foreground">
-              <SortTh k="p" search={search} onSort={sortBy}>
+          <thead className="max-lg:hidden">
+            <tr className="[&>th]:sticky [&>th]:top-0 [&>th]:z-[1] [&>th]:border-b [&>th]:bg-background [&>th]:px-3 [&>th]:py-2.5 [&>th]:text-left [&>th]:align-bottom [&>th]:text-[13px] [&>th]:leading-[1.3] [&>th]:font-semibold [&>th]:text-muted-foreground">
+              <SortTh k="p" search={search} onSort={sortBy} className="pl-[18px]!">
                 {t.colProvider}
               </SortTh>
-              <SortTh k="n" search={search} onSort={sortBy}>
+              <SortTh k="n" search={search} onSort={sortBy} className="w-full">
                 {t.colTariff}
               </SortTh>
               {allMonths && (
@@ -207,36 +208,46 @@ function SortTh({
   search,
   onSort,
   num,
+  className,
   children,
 }: {
   k: SortKey
   search: ExplorerSearch
   onSort: (k: SortKey) => void
   num?: boolean
+  className?: string
   children: React.ReactNode
 }) {
   const active = search.sort === k
+  const Arrow = search.desc ? ArrowDown : ArrowUp
   return (
     <th
-      className={cn(num && 'text-right!')}
+      className={cn(num && 'text-right!', className)}
       aria-sort={active ? (search.desc ? 'descending' : 'ascending') : undefined}
     >
-      <button type="button" className={cn('cursor-pointer', active && 'text-foreground')} onClick={() => onSort(k)}>
+      {/* The arrow hangs outside the label so headings stay flush with their column's values */}
+      <button
+        type="button"
+        className={cn(
+          'relative cursor-pointer text-left hover:text-foreground',
+          num && 'text-right',
+          active && 'text-foreground',
+        )}
+        onClick={() => onSort(k)}
+      >
         {children}
-        <span className="inline-block w-[1em]" aria-hidden>
-          {active && (search.desc ? ' ↓' : ' ↑')}
-        </span>
+        {active && <Arrow className="absolute bottom-0.5 left-full ml-0.5 size-3.5" aria-hidden />}
       </button>
     </th>
   )
 }
 
 const cell =
-  'border-b px-3 py-3.5 align-top max-md:border-0 max-md:p-0 max-md:data-[l]:before:block max-md:data-[l]:before:text-xs max-md:data-[l]:before:text-muted-foreground max-md:data-[l]:before:content-[attr(data-l)]'
-const num = 'text-right max-md:text-left'
-const big = 'text-[17px] font-[650] whitespace-nowrap'
-const sub = 'block text-xs whitespace-nowrap text-muted-foreground'
-const na = 'text-[13px] font-medium text-muted-foreground'
+  'border-b px-3 py-4 align-baseline max-lg:border-0 max-lg:p-0 max-lg:data-[l]:before:block max-lg:data-[l]:before:text-xs max-lg:data-[l]:before:text-muted-foreground max-lg:data-[l]:before:content-[attr(data-l)]'
+const num = 'text-right max-lg:text-left'
+const big = 'text-[17px] font-semibold whitespace-nowrap'
+const sub = 'mt-0.5 block text-xs text-muted-foreground lg:ml-auto lg:max-w-[9rem] xl:max-w-[13rem]'
+const na = 'text-[13px] font-medium text-muted-foreground xl:whitespace-nowrap'
 
 function TariffRow({
   row: r,
@@ -259,7 +270,7 @@ function TariffRow({
   open: boolean
   onToggle: () => void
 }) {
-  const { t, eur, kwhPrice, ymLabel, duration } = i18n
+  const { t, kwhPrice, ymLabel, duration, eurFigure } = i18n
   const tariff = r.t
   const band = { '--band': TYPE_COLOR[tariff.c] } as React.CSSProperties
   const tiers = tierText(tariff, disc, i18n)
@@ -271,38 +282,43 @@ function TariffRow({
       <tr
         style={band}
         className={cn(
-          'bg-card max-md:grid max-md:grid-cols-[1fr_auto] max-md:gap-x-3 max-md:gap-y-1 max-md:border-b max-md:py-3 max-md:pr-3.5 max-md:pl-5 max-md:shadow-[inset_6px_0_0_var(--band)]',
+          'bg-card max-lg:grid max-lg:grid-cols-[1fr_auto] max-lg:gap-x-3 max-lg:gap-y-1 max-lg:border-b max-lg:py-3 max-lg:pr-3.5 max-lg:pl-5 max-lg:shadow-[inset_6px_0_0_var(--band)]',
           !tariff.av && '[&>td]:text-muted-foreground',
         )}
       >
         <td
           className={cn(
             cell,
-            'font-[650] whitespace-nowrap md:pl-[18px] md:shadow-[inset_6px_0_0_var(--band)] max-md:col-start-1',
+            'font-semibold xl:whitespace-nowrap lg:pl-[18px] lg:shadow-[inset_6px_0_0_var(--band)] max-lg:col-start-1',
           )}
         >
           {shortProvider(tariff.p)}
         </td>
-        <td className={cn(cell, 'max-md:col-span-full')}>
-          <span className="font-medium">{tariff.n}</span>
+        <td className={cn(cell, 'max-lg:col-span-full')}>
+          <span className="font-medium text-pretty">{tariff.n}</span>
           {!tariff.av && <span className="mt-1 block text-xs text-muted-foreground">{t.notOpen}</span>}
         </td>
         {allMonths && (
-          <td className={cn(cell, 'whitespace-nowrap max-md:col-span-full')} data-l={t.month}>
+          <td className={cn(cell, 'whitespace-nowrap max-lg:col-span-full')} data-l={t.month}>
             {ymLabel(ymOf(tariff))}
           </td>
         )}
-        <td className={cn(cell, 'whitespace-nowrap max-md:col-start-2 max-md:row-start-1 max-md:text-right')}>
-          <span
-            className="mr-1.5 inline-block size-2.5 rounded-full"
-            style={{ background: TYPE_COLOR[tariff.c] }}
-            aria-hidden
-          />
-          {t.typeLabel[tariff.c]}
+        <td className={cn(cell, 'lg:min-w-[8.5rem] max-lg:col-start-2 max-lg:row-start-1 max-lg:text-right')}>
+          {/* The dot stays with the label when a long type name wraps */}
+          <span className="inline-flex items-baseline gap-1.5 text-left">
+            <span
+              className="size-2.5 flex-none rounded-full"
+              style={{ background: TYPE_COLOR[tariff.c] }}
+              aria-hidden
+            />
+            {t.typeLabel[tariff.c]}
+          </span>
         </td>
-        <td className={cn(cell, num)} data-l={t.colPrice}>
+        <td className={cn(cell, num, 'lg:min-w-[9rem] xl:min-w-[9.5rem]')} data-l={t.colPrice}>
           {r.price != null ? (
-            <span className={big}>{kwhPrice(r.price)}</span>
+            <span className={big}>
+              <AlignedPrice v={r.price} i18n={i18n} />
+            </span>
           ) : (
             <span className={na}>{r.priceRaw ? t.notPublished : '—'}</span>
           )}
@@ -310,12 +326,12 @@ function TariffRow({
           {night && <span className={sub}>{night}</span>}
         </td>
         <td className={cn(cell, num)} data-l={t.colFee}>
-          <span className={big}>{r.fee != null ? eur(r.fee) : '—'}</span>
+          <span className={big}>{r.fee != null ? eurFigure(r.fee) : '—'}</span>
         </td>
-        <td className={cn(cell, num, 'min-w-[150px]')} data-l={t.colEst(kwh)}>
+        <td className={cn(cell, num, 'min-w-[8.5rem] xl:min-w-[150px]')} data-l={t.colEst(kwh)}>
           {r.est != null ? (
             <>
-              <span className={cn(big, 'block')}>{eur(r.est)}</span>
+              <span className={cn(big, 'block')}>{eurFigure(r.est)}</span>
               <div className="mt-1.5 h-1 overflow-hidden rounded-sm bg-muted">
                 <i
                   className="block h-full rounded-sm bg-primary motion-safe:transition-[width] motion-safe:duration-250 motion-safe:ease-out"
@@ -327,30 +343,50 @@ function TariffRow({
             <span className={na}>{t.cantEstimate}</span>
           )}
         </td>
-        <td className={cell} data-l={t.colContract}>
+        <td className={cn(cell, 'whitespace-nowrap')} data-l={t.colContract}>
           {duration(tariff.dur)}
         </td>
-        <td className={cn(cell, 'max-md:col-span-full max-md:pt-1.5')}>
+        <td className={cn(cell, 'text-right max-lg:col-span-full max-lg:pt-2 max-lg:text-left')}>
           <Button
-            variant={open ? 'default' : 'outline'}
+            variant="outline"
             size="sm"
-            className={cn('font-normal shadow-none', !open && 'bg-card')}
+            className={cn('gap-1 bg-card pr-2 font-medium shadow-none', open && 'border-foreground')}
             aria-expanded={open}
             onClick={onToggle}
           >
-            {open ? t.hide : t.details}
+            {/* Both labels share one cell so the button keeps its width when it toggles */}
+            <span className="grid text-left *:col-start-1 *:row-start-1">
+              <span className={cn(open && 'invisible')}>{t.details}</span>
+              <span className={cn(!open && 'invisible')}>{t.hide}</span>
+            </span>
+            <ChevronDown className={cn('size-4 motion-safe:transition-transform', open && 'rotate-180')} aria-hidden />
           </Button>
         </td>
       </tr>
       {open && (
-        <tr style={band} className="max-md:block">
+        <tr style={band} className="max-lg:block">
           <td
             colSpan={cols}
-            className="border-b bg-[#f9fafb] px-[18px] pt-1 pb-5 shadow-[inset_6px_0_0_var(--band)] max-md:block max-md:pl-5"
+            className="border-b bg-[#f9fafb] px-[18px] pt-2 pb-6 shadow-[inset_6px_0_0_var(--band)] max-lg:block max-lg:pl-5"
           >
             <TariffDetails tariff={tariff} i18n={i18n} />
           </td>
         </tr>
+      )}
+    </>
+  )
+}
+
+/** A per-kWh price, padded with hidden digits so a right-aligned column lines up on the decimal point */
+function AlignedPrice({ v, i18n }: { v: number; i18n: I18n }) {
+  const { text, pad } = i18n.kwhFigure(v)
+  return (
+    <>
+      {text}
+      {pad > 0 && (
+        <span className="invisible select-none" aria-hidden>
+          {'0'.repeat(pad)}
+        </span>
       )}
     </>
   )
@@ -380,7 +416,7 @@ function TariffDetails({ tariff, i18n }: { tariff: Tariff; i18n: I18n }) {
   return (
     <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-x-8 gap-y-4">
       {tiers.length > 1 ? (
-        <div className="md:col-span-2">
+        <div className="lg:col-span-2">
           <h3 className={h3}>{t.priceByUsage}</h3>
           <table className="text-sm [&_td]:py-[3px] [&_td]:pr-3.5 [&_td]:whitespace-nowrap [&_th]:py-[3px] [&_th]:pr-3.5 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:whitespace-nowrap [&_th]:text-muted-foreground">
             <thead>

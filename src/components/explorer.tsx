@@ -93,19 +93,19 @@ export function Explorer({ data, search: rawSearch, update }: ExplorerProps) {
 /** Shown while the tariff data downloads; mirrors the page layout to avoid a jump. */
 export function ExplorerSkeleton() {
   return (
-    <div aria-busy="true" className="pt-7">
-      <div className="flex flex-wrap gap-7">
-        <Skeleton className="h-[64px] w-48" />
-        <Skeleton className="h-[64px] w-[110px]" />
-        <Skeleton className="mt-auto h-[42px] w-64" />
-        <Skeleton className="mt-auto h-[42px] w-56" />
+    <div aria-busy="true" className="pt-8">
+      <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
+        <Skeleton className="h-[66px] w-48" />
+        <Skeleton className="h-[66px] w-[120px]" />
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-10 w-56" />
       </div>
       <div className="mt-6 flex flex-wrap gap-2">
         {Array.from({ length: 13 }, (_, i) => (
-          <Skeleton key={i} className="h-9 w-24 rounded-full" />
+          <Skeleton key={i} className="h-8 w-24 rounded-full" />
         ))}
       </div>
-      <Skeleton className="mt-12 h-8 w-80" />
+      <Skeleton className="mt-14 h-9 w-80" />
       <Skeleton className="mt-6 h-[380px] w-full" />
     </div>
   )

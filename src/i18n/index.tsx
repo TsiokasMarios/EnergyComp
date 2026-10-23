@@ -14,6 +14,7 @@ export const localeFromParam = (p: string | undefined): Locale | null =>
 
 const DICTS: Record<Locale, Dict> = { en, el }
 const INTL: Record<Locale, string> = { en: 'en-GB', el: 'el-GR' }
+const KWH_DECIMALS = 5
 
 function makeI18n(locale: Locale) {
   const tag = INTL[locale]
@@ -26,7 +27,9 @@ function makeI18n(locale: Locale) {
     })
   const eur2 = money(2, 2)
   const eur4 = money(4, 4)
-  const kwhFmt = money(3, 5)
+  const kwhFmt = money(3, KWH_DECIMALS)
+  const kwhNum = new Intl.NumberFormat(tag, { minimumFractionDigits: 3, maximumFractionDigits: KWH_DECIMALS })
+  const num2 = new Intl.NumberFormat(tag, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   const tickFmts = new Map<number, Intl.NumberFormat>()
   const monthYear = new Intl.DateTimeFormat(tag, { month: 'long', year: 'numeric' })
   const monthShort = new Intl.DateTimeFormat(tag, { month: 'short' })
@@ -41,6 +44,17 @@ function makeI18n(locale: Locale) {
     eur: (v: unknown) => (isNum(v) ? eur2.format(v) : ''),
     /** Per-kWh prices with 3–5 decimals */
     kwhPrice: (v: unknown) => (isNum(v) ? kwhFmt.format(v) : ''),
+    /**
+     * Table figures without the € sign (the column heading carries the unit). A per-kWh price
+     * also reports how many digits short of the maximum it is, so a column can pad it and line
+     * up the decimal separators.
+     */
+    kwhFigure: (v: number) => {
+      const parts = kwhNum.formatToParts(v)
+      const frac = parts.find((p) => p.type === 'fraction')?.value.length ?? 0
+      return { text: parts.map((p) => p.value).join(''), pad: KWH_DECIMALS - frac }
+    },
+    eurFigure: (v: number) => num2.format(v),
     /** Chart values: 4 decimals per kWh, 2 per month */
     metricValue: (v: number, metric: 'price' | 'est') => (metric === 'price' ? eur4 : eur2).format(v),
     tick: (v: number, decimals: number) => {
