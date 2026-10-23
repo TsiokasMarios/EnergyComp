@@ -107,6 +107,8 @@ export interface Trend {
 export function buildTrend(
   data: Tariff[],
   months: number[],
+  /** Plan types present in the data */
+  available: TariffColor[],
   f: Filters,
   kwh: number,
   disc: boolean,
@@ -135,7 +137,7 @@ export function buildTrend(
     const best = market[t.c][i]
     if (!best || v < best.v) market[t.c][i] = { t, v }
   }
-  const types = TYPE_ORDER.filter((c) => !f.types.length || f.types.includes(c))
+  const types = available.filter((c) => !f.types.length || f.types.includes(c))
   const cheapest = (list: (Point | null)[]) =>
     list.reduce<Point | null>((a, b) => (b && (!a || b.v < a.v) ? b : a), null)
   const panels: Panel[] = (

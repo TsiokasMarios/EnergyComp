@@ -67,9 +67,9 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
     babel({ presets: [reactCompilerPreset()] }),
-    // Fully static output (dist/client): both locales are prerendered and the
-    // tariff data ships as a content-hashed JSON asset, so any static host works.
-    prerender(['/', '/el']),
+    // Fully static output (dist/client): both registers in both locales are prerendered
+    // and the tariff data ships as content-hashed JSON assets, so any static host works.
+    prerender(['/', '/el', '/gas', '/el/gas']),
   ]),
 })
 

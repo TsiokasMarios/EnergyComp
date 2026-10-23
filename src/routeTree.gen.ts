@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as Char123LangChar125RouteRouteImport } from './routes/{-$lang}/route'
 import { Route as Char123LangChar125IndexRouteImport } from './routes/{-$lang}/index'
+import { Route as Char123LangChar125GasRouteImport } from './routes/{-$lang}/gas'
 
 const Char123LangChar125RouteRoute = Char123LangChar125RouteRouteImport.update({
   id: '/{-$lang}',
@@ -22,25 +23,33 @@ const Char123LangChar125IndexRoute = Char123LangChar125IndexRouteImport.update({
   path: '/',
   getParentRoute: () => Char123LangChar125RouteRoute,
 } as any)
+const Char123LangChar125GasRoute = Char123LangChar125GasRouteImport.update({
+  id: '/gas',
+  path: '/gas',
+  getParentRoute: () => Char123LangChar125RouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/{-$lang}': typeof Char123LangChar125RouteRouteWithChildren
+  '/{-$lang}/gas': typeof Char123LangChar125GasRoute
   '/{-$lang}/': typeof Char123LangChar125IndexRoute
 }
 export interface FileRoutesByTo {
+  '/{-$lang}/gas': typeof Char123LangChar125GasRoute
   '/{-$lang}': typeof Char123LangChar125IndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$lang}': typeof Char123LangChar125RouteRouteWithChildren
+  '/{-$lang}/gas': typeof Char123LangChar125GasRoute
   '/{-$lang}/': typeof Char123LangChar125IndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/{-$lang}' | '/{-$lang}/'
+  fullPaths: '/{-$lang}' | '/{-$lang}/gas' | '/{-$lang}/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/{-$lang}'
-  id: '__root__' | '/{-$lang}' | '/{-$lang}/'
+  to: '/{-$lang}/gas' | '/{-$lang}'
+  id: '__root__' | '/{-$lang}' | '/{-$lang}/gas' | '/{-$lang}/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -63,15 +72,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LangChar125IndexRouteImport
       parentRoute: typeof Char123LangChar125RouteRoute
     }
+    '/{-$lang}/gas': {
+      id: '/{-$lang}/gas'
+      path: '/gas'
+      fullPath: '/{-$lang}/gas'
+      preLoaderRoute: typeof Char123LangChar125GasRouteImport
+      parentRoute: typeof Char123LangChar125RouteRoute
+    }
   }
 }
 
 interface Char123LangChar125RouteRouteChildren {
+  Char123LangChar125GasRoute: typeof Char123LangChar125GasRoute
   Char123LangChar125IndexRoute: typeof Char123LangChar125IndexRoute
 }
 
 const Char123LangChar125RouteRouteChildren: Char123LangChar125RouteRouteChildren =
   {
+    Char123LangChar125GasRoute: Char123LangChar125GasRoute,
     Char123LangChar125IndexRoute: Char123LangChar125IndexRoute,
   }
 

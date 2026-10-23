@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useDraft } from '@/hooks/use-draft'
 import { useI18n } from '@/i18n'
 import type { Dataset, ExplorerSearch } from '@/lib/data'
-import { TYPE_COLOR, TYPE_ORDER, matches, shortProvider } from '@/lib/tariffs'
+import { TYPE_COLOR, matches, shortProvider } from '@/lib/tariffs'
 import type { Filters as FilterState } from '@/lib/tariffs'
 import type { TariffColor } from '@/lib/types'
 
@@ -49,12 +49,12 @@ export function Filters({ data, filters, search, update, toggleProvider, selectM
               <SelectValue />
             </SelectTrigger>
             <SelectContent position="popper" className="max-h-80">
+              <SelectItem value="all">{t.allMonths}</SelectItem>
               {[...data.months].reverse().map((ym) => (
                 <SelectItem key={ym} value={String(ym)}>
                   {ymLabel(ym)}
                 </SelectItem>
               ))}
-              <SelectItem value="all">{t.allMonths}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -111,7 +111,7 @@ export function Filters({ data, filters, search, update, toggleProvider, selectM
           {search.type.length > 0 && <LinkButton onClick={() => update({ type: [] })}>{t.showAllTypes}</LinkButton>}
         </GroupHead>
         <div className="flex flex-wrap gap-2" role="group" aria-labelledby="type-label">
-          {TYPE_ORDER.map((c) => (
+          {data.types.map((c) => (
             <Chip
               key={c}
               pressed={search.type.includes(c)}

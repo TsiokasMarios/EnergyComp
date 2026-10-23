@@ -260,6 +260,10 @@ function PanelPlot({
       )}
       {ends.map((e) => (
         <g key={e.c}>
+          {/* Anchor the label on lines that don't end on a cheapest dot; hollow so it doesn't read as a win */}
+          {pa.win[e.i] !== pa.series[e.c][e.i] && (
+            <circle cx={x(e.i)} cy={e.py} r={3.5} fill="var(--card)" stroke={TYPE_COLOR[e.c]} strokeWidth={2} />
+          )}
           <line x1={x(e.i) + 7} y1={e.py} x2={lx - 5} y2={e.ly} stroke={AXIS} />
           <text x={lx} y={e.ly + 4}>
             <tspan className="fill-foreground text-[13px] font-[650]">{metricValue(e.v, metric)}</tspan>{' '}

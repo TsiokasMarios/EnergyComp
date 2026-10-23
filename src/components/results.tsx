@@ -7,7 +7,7 @@ import { useI18n } from '@/i18n'
 import type { I18n } from '@/i18n'
 import type { ExplorerSearch, SortKey } from '@/lib/data'
 import { TYPE_COLOR, estimate, headline, isNum, isWhole, priceOf, shortProvider, tiersOf, ymOf } from '@/lib/tariffs'
-import type { Amount, Tariff } from '@/lib/types'
+import type { Amount, Fuel, Tariff } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
 const PAGE = 300
@@ -48,6 +48,7 @@ export function buildRows(tariffs: Tariff[], kwh: number, disc: boolean, sort: S
 
 interface ResultsProps {
   rows: Row[]
+  fuel: Fuel
   search: ExplorerSearch
   kwh: number
   allMonths: boolean
@@ -60,6 +61,7 @@ interface ResultsProps {
 
 export function Results({
   rows,
+  fuel,
   search,
   kwh,
   allMonths,
@@ -120,7 +122,7 @@ export function Results({
           <Input
             id="q"
             type="search"
-            placeholder={t.searchPlaceholder}
+            placeholder={t.fuels[fuel].searchPlaceholder}
             className="h-[42px] w-[min(320px,100%)] bg-card text-[15px] shadow-none"
             value={qText}
             onChange={(e) => {

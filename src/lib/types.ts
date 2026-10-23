@@ -1,4 +1,7 @@
-/** Register colour code: blue = fixed, yellow = variable, green = special ("green") tariff. */
+/** Which register a tariff comes from; each has its own page and data files. */
+export type Fuel = 'electricity' | 'gas'
+
+/** Register colour code: blue = fixed, yellow = variable, green = special ("green") tariff (electricity only). */
 export type TariffColor = 'blue' | 'yellow' | 'green'
 
 /** A price or fee as published: a number, free text when the register has a note instead, or missing. */

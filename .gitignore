@@ -13,7 +13,7 @@ __unconfig*
 todos.json
 
 # Raw source pages (large); regenerate data with scripts/extract.ts
-scripts/snapshots/*.html
+scripts/snapshots/**/*.html
 
 # Output of scripts/probe_source.py
 probe-out

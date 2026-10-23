@@ -1,17 +1,54 @@
-import { Link } from '@tanstack/react-router'
-import { Languages } from 'lucide-react'
+import { Link, useMatches } from '@tanstack/react-router'
+import { Flame, Languages, Zap } from 'lucide-react'
 import { localeParam, useI18n } from '@/i18n'
-import { meta } from '@/lib/data'
+import { FUELS } from '@/lib/data'
+import type { Fuel } from '@/lib/types'
+import { cn } from '@/lib/utils'
+
+const FUEL_ROUTE = { electricity: '/{-$lang}', gas: '/{-$lang}/gas' } as const
+const FUEL_ICON = { electricity: Zap, gas: Flame }
+
+/** The register the current page shows; pages outside the explorer (404) fall back to electricity. */
+export function useFuel(): Fuel {
+  return useMatches({
+    select: (ms) => ms.reduce<Fuel>((f, m) => m.staticData.fuel ?? f, 'electricity'),
+  })
+}
 
 export function SiteHeader() {
   const { t, locale, date } = useI18n()
+  const fuel = useFuel()
+  const copy = t.fuels[fuel]
   const other = locale === 'en' ? 'el' : 'en'
   return (
     <header className="bg-primary text-primary-foreground">
       <div className="mx-auto max-w-[1240px] px-4 pt-6 pb-8 sm:px-6 sm:pt-8">
-        <div className="flex justify-end">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <nav aria-label={t.fuelNav} className="flex gap-1 rounded-lg bg-white/8 p-1">
+            {(Object.keys(FUEL_ROUTE) as Fuel[]).map((f) => {
+              const Icon = FUEL_ICON[f]
+              return (
+                <Link
+                  key={f}
+                  to={FUEL_ROUTE[f]}
+                  params={{ lang: localeParam(locale) }}
+                  // Sets aria-current; without exact, "/" would also match "/gas"
+                  activeOptions={{ exact: true }}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm transition-colors',
+                    f === fuel
+                      ? 'bg-white font-semibold text-primary'
+                      : 'text-header-muted hover:bg-white/10 hover:text-white',
+                  )}
+                >
+                  <Icon className="size-4" aria-hidden />
+                  {t.fuels[f].nav}
+                </Link>
+              )
+            })}
+          </nav>
           <Link
-            to="/{-$lang}"
+            to={FUEL_ROUTE[fuel]}
             params={{ lang: localeParam(other) }}
             search={(prev) => prev}
             hrefLang={other}
@@ -21,16 +58,16 @@ export function SiteHeader() {
             {t.otherLanguage}
           </Link>
         </div>
-        <h1 className="mt-2 max-w-[16ch] text-[clamp(30px,4.6vw,52px)] leading-[1.05] font-[750] tracking-[-0.02em]">
-          {t.title}
+        <h1 className="mt-5 max-w-[18ch] text-[clamp(30px,4.6vw,52px)] leading-[1.05] font-[750] tracking-[-0.02em]">
+          {copy.title}
         </h1>
-        <p className="mt-3.5 max-w-[62ch] text-base text-header-muted">{t.lede}</p>
+        <p className="mt-3.5 max-w-[62ch] text-base text-header-muted">{copy.lede}</p>
         <p className="mt-2.5 text-[13px] text-[#94a3b2]">
           {t.sourcePrefix}{' '}
           <a href="https://energycost.gr/" rel="noopener" className="text-white underline">
             energycost.gr
           </a>
-          {t.sourceSuffix(date(meta.captured))}
+          {t.sourceSuffix(date(FUELS[fuel].meta.captured))}
         </p>
       </div>
       <div className="grid h-2 grid-cols-3" aria-hidden>
@@ -44,10 +81,11 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   const { t } = useI18n()
+  const fuel = useFuel()
   return (
     <footer className="border-t text-[13px] text-muted-foreground">
       <div className="mx-auto max-w-[1240px] space-y-2 px-4 pt-5 pb-10 sm:px-6">
-        {t.footer.map((p) => (
+        {t.fuels[fuel].footer.map((p) => (
           <p key={p} className="max-w-[80ch]">
             {p}
           </p>

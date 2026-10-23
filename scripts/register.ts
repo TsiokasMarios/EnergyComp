@@ -1,13 +1,21 @@
 /**
- * Shared steps for turning the RAAEY residential tariff register (energycost.gr)
+ * Shared steps for turning the RAAEY residential tariff registers (energycost.gr)
  * into the compact JSON the app ships: parse, merge with earlier captures, write.
+ * The electricity and natural gas registers use the same page layout.
  */
-import { existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { decodeHTML } from 'entities'
-import type { Tariff, TariffMeta, Tier } from '../src/lib/types.ts'
+import type { Fuel, Tariff, TariffMeta, Tier } from '../src/lib/types.ts'
 
-export const REGISTER_URL =
-  'https://energycost.gr/%ce%ba%ce%b1%cf%84%ce%b1%cf%87%cf%89%cf%81%ce%b7%ce%bc%ce%ad%ce%bd%ce%b1-%cf%84%ce%b9%ce%bc%ce%bf%ce%bb%cf%8c%ce%b3%ce%b9%ce%b1-%cf%80%cf%81%ce%bf%ce%bc%ce%ae%ce%b8%ce%b5%ce%b9%ce%b1%cf%82-%ce%b7-3/'
+export const FUELS: Fuel[] = ['electricity', 'gas']
+
+export const REGISTER_URL: Record<Fuel, string> = {
+  electricity:
+    'https://energycost.gr/%ce%ba%ce%b1%cf%84%ce%b1%cf%87%cf%89%cf%81%ce%b7%ce%bc%ce%ad%ce%bd%ce%b1-%cf%84%ce%b9%ce%bc%ce%bf%ce%bb%cf%8c%ce%b3%ce%b9%ce%b1-%cf%80%cf%81%ce%bf%ce%bc%ce%ae%ce%b8%ce%b5%ce%b9%ce%b1%cf%82-%ce%b7-3/',
+  gas: 'https://energycost.gr/%ce%ba%ce%b1%cf%84%ce%b1%cf%87%cf%89%cf%81%ce%b7%ce%bc%ce%ad%ce%bd%ce%b1-%cf%84%ce%b9%ce%bc%ce%bf%ce%bb%cf%8c%ce%b3%ce%b9%ce%b1-%cf%80%cf%81%ce%bf%ce%bc%ce%ae%ce%b8%ce%b5%ce%b9%ce%b1%cf%82_gas/',
+}
+
+export const isFuel = (v: unknown): v is Fuel => (FUELS as unknown[]).includes(v)
 
 /** Fewer tariffs than this means we got a block page or the layout changed. */
 const MIN_TARIFFS = 100
@@ -136,6 +144,7 @@ export function writeData(dir: string, tariffs: Tariff[], captured: string) {
     first: months[0],
     latest: months.at(-1)!,
   }
+  mkdirSync(dir, { recursive: true })
   writeFileSync(`${dir}/tariffs.json`, JSON.stringify(tariffs))
   writeFileSync(`${dir}/meta.json`, `${JSON.stringify(meta, null, 2)}\n`)
 

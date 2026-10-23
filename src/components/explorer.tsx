@@ -1,7 +1,9 @@
+import { useRouter } from '@tanstack/react-router'
 import { useDeferredValue, useRef } from 'react'
 import { Filters } from '@/components/filters'
 import { Results, buildRows } from '@/components/results'
 import { TrendSection } from '@/components/trend-section'
+import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useI18n } from '@/i18n'
 import type { Dataset, ExplorerSearch } from '@/lib/data'
@@ -16,8 +18,12 @@ interface ExplorerProps {
 
 export function Explorer({ data, search: rawSearch, update }: ExplorerProps) {
   const { ymLabel } = useI18n()
-  // Shared links can name providers that have since left the register
-  const search = { ...rawSearch, prov: rawSearch.prov.filter((p) => data.providers.includes(p)) }
+  // Shared links can name providers that have since left the register, or a type this register lacks
+  const search = {
+    ...rawSearch,
+    prov: rawSearch.prov.filter((p) => data.providers.includes(p)),
+    type: rawSearch.type.filter((c) => data.types.includes(c)),
+  }
   const resultsRef = useRef<HTMLDivElement>(null)
   const latest = data.months[data.months.length - 1]
   const ym = search.month === 'all' ? 'all' : search.month && data.months.includes(search.month) ? search.month : latest
@@ -34,7 +40,7 @@ export function Explorer({ data, search: rawSearch, update }: ExplorerProps) {
     search.sort,
     search.desc,
   )
-  const trend = buildTrend(data.tariffs, data.months, filters, kwh, search.disc, search.by)
+  const trend = buildTrend(data.tariffs, data.months, data.types, filters, kwh, search.disc, search.by)
 
   const toggleProvider = (p: string) =>
     update({ prov: search.prov.includes(p) ? search.prov.filter((x) => x !== p) : [...search.prov, p] })
@@ -71,6 +77,7 @@ export function Explorer({ data, search: rawSearch, update }: ExplorerProps) {
         key={[ym, search.open, search.prov, search.type].join('|')}
         ref={resultsRef}
         rows={rows}
+        fuel={data.fuel}
         search={search}
         kwh={kwh}
         allMonths={ym === 'all'}
@@ -100,6 +107,19 @@ export function ExplorerSkeleton() {
       </div>
       <Skeleton className="mt-12 h-8 w-80" />
       <Skeleton className="mt-6 h-[380px] w-full" />
+    </div>
+  )
+}
+
+export function LoadError() {
+  const { t } = useI18n()
+  const router = useRouter()
+  return (
+    <div className="py-24 text-center text-muted-foreground">
+      <p>{t.loadError}</p>
+      <Button variant="outline" className="mt-3" onClick={() => router.invalidate()}>
+        {t.retry}
+      </Button>
     </div>
   )
 }

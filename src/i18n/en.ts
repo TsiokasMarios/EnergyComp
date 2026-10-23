@@ -1,19 +1,39 @@
 const months = (n: number) => `${n} month${n === 1 ? '' : 's'}`
 
 export const en = {
-  // Page
-  title: 'Household electricity tariffs in Greece',
-  description:
-    'Compare every residential electricity tariff registered with the Greek energy regulator (RAAEY), month by month, at your own usage.',
-  lede: 'Every residential tariff registered with the energy regulator (RAAEY), month by month. Pick your providers, set your monthly usage and compare.',
+  // Page; the copy that differs between the two registers
+  fuels: {
+    electricity: {
+      nav: 'Electricity',
+      title: 'Household electricity tariffs in Greece',
+      description:
+        'Compare every residential electricity tariff registered with the Greek energy regulator (RAAEY), month by month, at your own usage.',
+      lede: 'Every residential tariff registered with the energy regulator (RAAEY), month by month. Pick your providers, set your monthly usage and compare.',
+      footer: [
+        "Estimated cost = fixed fee + your kWh at the tariff's price, following its kWh tiers. It covers the supplier's charge only; your bill also includes regulated network charges, ETMEAR, levies and VAT, which are the same whichever supplier you pick.",
+        'Variable (yellow) tariffs publish their price at the start of each month, so the newest month may show "Not published yet". Conditional discounts usually require on-time payment or e-billing; open a tariff\'s details to see the exact condition.',
+      ],
+      searchPlaceholder: 'e.g. Home, Blue, Smart',
+    },
+    gas: {
+      nav: 'Natural gas',
+      title: 'Household natural gas tariffs in Greece',
+      description:
+        'Compare every residential natural gas tariff registered with the Greek energy regulator (RAAEY), month by month, at your own usage.',
+      lede: 'Every residential natural gas tariff registered with the energy regulator (RAAEY), month by month. Pick your providers, set your monthly usage and compare.',
+      footer: [
+        "Estimated cost = fixed fee + your kWh at the tariff's price. It covers the supplier's charge only; your bill also includes regulated distribution and transmission charges, the special consumption tax, levies and VAT, which are the same whichever supplier you pick.",
+        'Gas use swings with the seasons, so try both a winter and a summer month from your bills: a high fixed fee weighs more in the light months. Your bill shows usage in kWh.',
+        'Variable (yellow) tariffs publish their price at the start of each month, so the newest month may show "Not published yet". Conditional discounts usually require on-time payment or e-billing; open a tariff\'s details to see the exact condition.',
+      ],
+      searchPlaceholder: 'e.g. Home, Fixed, Flex',
+    },
+  },
+  fuelNav: 'Energy type',
   sourcePrefix: 'Data from',
   sourceSuffix: (date: string) =>
     `, captured ${date}. Prices are the supply charge only, before network charges, levies and VAT.`,
   otherLanguage: 'Ελληνικά',
-  footer: [
-    "Estimated cost = fixed fee + your kWh at the tariff's price, following its kWh tiers. It covers the supplier's charge only; your bill also includes regulated network charges, ETMEAR, levies and VAT, which are the same whichever supplier you pick.",
-    'Variable (yellow) tariffs publish their price at the start of each month, so the newest month may show "Not published yet". Conditional discounts usually require on-time payment or e-billing; open a tariff\'s details to see the exact condition.',
-  ],
   loadError: "Couldn't load the tariff data.",
   retry: 'Try again',
 
@@ -34,7 +54,7 @@ export const en = {
   // Trend
   trendTitle: 'Cheapest plan each month',
   trendNote: (kwh: number) =>
-    `One line per plan type: the best fixed, variable and green tariff each month. Prices are all-in at your usage of ${kwh} kWh a month (fixed fee plus every kWh), so tariffs with a high fee or a free allowance compare fairly.`,
+    `One line per plan type: the best tariff of each type, every month. Prices are all-in at your usage of ${kwh} kWh a month (fixed fee plus every kWh), so tariffs with a high fee or a free allowance compare fairly.`,
   compareBy: 'Compare by',
   perKwh: '€ per kWh',
   perMonth: '€ per month',
@@ -74,7 +94,6 @@ export const en = {
   lowest: (provider: string, name: string, price: string, kwh: number) =>
     `Lowest estimate: ${provider}, ${name}, ${price} per month at ${kwh} kWh`,
   search: 'Search tariff names',
-  searchPlaceholder: 'e.g. Home, Blue, Smart',
   colProvider: 'Provider',
   colTariff: 'Tariff',
   colType: 'Type',
